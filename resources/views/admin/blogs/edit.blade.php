@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layouts.admin')
 
 @section('title', 'Edit Blog')
 
@@ -11,11 +11,11 @@
         @method('PUT')
         <div>
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="{{ $blog->title }}" required>
+            <input type="text" id="title" name="title" value="{{ old('title', $blog->title) }}" required>
         </div>
         <div>
             <label for="content">Content:</label>
-            <textarea id="content" name="content" rows="4" required>{{ $blog->content }}</textarea>
+            <textarea id="content" name="content" rows="4">{{ old('content', $blog->content) }}</textarea>
         </div>
         <div>
             <label>Categories:</label><br>
@@ -27,4 +27,9 @@
         </div>
         <button type="submit">Update</button>
     </form>
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 @endsection

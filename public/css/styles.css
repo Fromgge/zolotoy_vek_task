@@ -1,0 +1,26 @@
+.error-message {
+    color: #721c24; /* Цвет текста */
+    background-color: #f8d7da; /* Цвет фона */
+    border: 1px solid #f5c6cb; /* Цвет границы */
+    padding: 15px 20px; /* Внутренний отступ */
+    margin-bottom: 20px; /* Внешний отступ снизу */
+    border-radius: 5px; /* Радиус границы */
+    font-size: 16px; /* Размер шрифта */
+    font-weight: bold; /* Жирный шрифт */
+    text-align: left; /* Выравнивание текста по центру */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
+}
+
+.success-message {
+    color: #155724; /* Цвет текста */
+    background-color: #d4edda; /* Цвет фона */
+    border: 1px solid #c3e6cb; /* Цвет границы */
+    padding: 15px 20px; /* Внутренний отступ */
+    margin-bottom: 20px; /* Внешний отступ снизу */
+    border-radius: 5px; /* Радиус границы */
+    font-size: 16px; /* Размер шрифта */
+    font-weight: bold; /* Жирный шрифт */
+    text-align: center; /* Выравнивание текста по центру */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
+}
+

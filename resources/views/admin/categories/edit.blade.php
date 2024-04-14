@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layouts.admin')
 
 @section('title', 'Edit Category')
 
@@ -15,4 +15,9 @@
         </div>
         <button type="submit">Update</button>
     </form>
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 @endsection

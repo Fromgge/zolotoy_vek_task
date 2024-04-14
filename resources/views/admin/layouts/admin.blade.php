@@ -6,6 +6,10 @@
     <title>@yield('title')</title>
     <!-- Подключение CSS стилей -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <style>
         /* Ваши дополнительные стили здесь */
     </style>
@@ -18,5 +22,16 @@
 <div class="content">
     @yield('content')
 </div>
+
+@if ($errors->any())
+    @foreach ($errors->all() as $error)
+        <div class="error-message">{{ $error }}</div>
+    @endforeach
+@endif
+
+@if(session('success'))
+    <div class="success-message">{{ session('success') }}</div>
+@endif
+
 </body>
 </html>

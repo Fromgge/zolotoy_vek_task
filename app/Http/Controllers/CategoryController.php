@@ -26,12 +26,12 @@ class CategoryController extends Controller
 
     public function search(Request $request)
     {
-        $start_date = $request->input('start_date');
-        $end_date = $request->input('end_date');
-        $category_id = $request->input('category_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $categoryId = $request->input('category');
         $order = $request->input('order');
 
-        $blogs = Blog::search($category_id, $start_date, $end_date, $order);
+        $blogs = Blog::search($categoryId, $startDate, $endDate, $order);
 
         AjaxHelper::addResponse('html', '#search_results', view('categories._parts._search', compact('blogs'))->render());
 

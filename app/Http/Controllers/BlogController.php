@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Blog;
 use App\Classes\AjaxHelper;
-
 use App\Models\Category;
 
 class BlogController extends Controller

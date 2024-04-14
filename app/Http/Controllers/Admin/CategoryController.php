@@ -5,14 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
-
     public function index()
     {
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        try {
+            $categories = Category::all();
+            return view('admin.categories.index', compact('categories'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching categories: ' . $e->getMessage());
+            return redirect()->route('admin.categories.index')->with('error', 'Error fetching categories.');
+        }
     }
 
     public function create()
@@ -20,52 +27,83 @@ class CategoryController extends Controller
         return view('admin.categories.create');
     }
 
-
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:categories|max:255',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|max:50',
+            ]);
 
-        Category::create($request->all());
+            Category::create($request->all());
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully');
+            return redirect()->route('admin.categories.index')->with('success', 'Category created successfully');
+        } catch (ValidationException $e) {
+            Log::error('Validation error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Validation error: ' . $e->getMessage())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error creating category: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error creating category: ' . $e->getMessage());
+        }
+
     }
-
 
     public function show($id)
     {
-        $category = Category::findOrFail($id);
-        return view('admin.categories.show', compact('category'));
+        try {
+            $category = Category::findOrFail($id);
+            return view('admin.categories.show', compact('category'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('admin.categories.index')->with('error', 'Category not found');
+        } catch (\Exception $e) {
+            Log::error('Error fetching category details: ' . $e->getMessage());
+            return redirect()->route('admin.categories.index')->with('error', 'Error fetching category details.');
+        }
     }
-
 
     public function edit($id)
     {
-        $category = Category::findOrFail($id);
-        return view('admin.categories.edit', compact('category'));
+        try {
+            $category = Category::findOrFail($id);
+            return view('admin.categories.edit', compact('category'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('admin.categories.index')->with('error', 'Category not found');
+        } catch (\Exception $e) {
+            Log::error('Error fetching category details: ' . $e->getMessage());
+            return redirect()->route('admin.categories.index')->with('error', 'Error fetching category details.');
+        }
     }
-
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|max:50',
+            ]);
 
-        $category = Category::findOrFail($id);
-        $category->update($request->all());
+            $category = Category::findOrFail($id);
+            $category->update($request->all());
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully');
+            return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully');
+        } catch (ValidationException $e) {
+            return redirect()->back()->with('error', 'Validation error: ' . $e->getMessage())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error updating category: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error updating category: ' . $e->getMessage());
+        }
     }
-
 
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        try {
+            $category = Category::findOrFail($id);
+            $category->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully');
+            return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('admin.categories.index')->with('error', 'Category not found');
+        } catch (\Exception $e) {
+            Log::error('Error deleting category: ' . $e->getMessage());
+            return redirect()->route('admin.categories.index')->with('error', 'Error deleting category: ' . $e->getMessage());
+        }
     }
 }
-
