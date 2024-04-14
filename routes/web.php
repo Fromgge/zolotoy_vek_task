@@ -5,7 +5,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Admin\BlogController as BlogControllerAdmin;
+use App\Http\Controllers\Admin\BlogController as BlogsControllerAdmin;
 use App\Http\Controllers\Admin\CategoryController as CategoryControllerAdmin;
 
 /*
@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\CategoryController as CategoryControllerAdmin;
 |
 */
 Route::redirect('/', '/categories');
-//Blogs
+
 Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
 Route::get('/blogs/{id}', [BlogController::class, 'view'])->name('blogs.view');
 
@@ -30,27 +30,35 @@ Route::post('categories/search', [CategoryController::class, 'search'])->name('c
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
-
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
-    Route::get('blogs', [BlogControllerAdmin::class, 'index'])->name('admin.blogs.index');
-    Route::get('blogs/create', [BlogControllerAdmin::class, 'create'])->name('admin.blogs.create');
-    Route::post('blogs', [BlogControllerAdmin::class, 'store'])->name('admin.blogs.store');
-    Route::get('blogs/{blog}/edit', [BlogControllerAdmin::class, 'edit'])->name('admin.blogs.edit');
-    Route::put('blogs/{blog}', [BlogControllerAdmin::class, 'update'])->name('admin.blogs.update');
-    Route::delete('blogs/{blog}', [BlogControllerAdmin::class, 'destroy'])->name('admin.blogs.destroy');
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
-    Route::get('categories', [CategoryControllerAdmin::class, 'index'])->name('admin.categories.index');
-    Route::get('categories/create', [CategoryControllerAdmin::class, 'create'])->name('admin.categories.create');
-    Route::post('categories', [CategoryControllerAdmin::class, 'store'])->name('admin.categories.store');
-    Route::get('categories/{category}/edit', [CategoryControllerAdmin::class, 'edit'])->name('admin.categories.edit');
-    Route::put('categories/{category}', [CategoryControllerAdmin::class, 'update'])->name('admin.categories.update');
-    Route::delete('categories/{category}', [CategoryControllerAdmin::class, 'destroy'])->name('admin.categories.destroy');
+    Route::resource('blogs', BlogsControllerAdmin::class)->names([
+        'index' => 'admin.blogs.index',
+        'create' => 'admin.blogs.create',
+        'store' => 'admin.blogs.store',
+        'edit' => 'admin.blogs.edit',
+        'update' => 'admin.blogs.update',
+        'destroy' => 'admin.blogs.destroy',
+    ]);
+    Route::resource('categories', CategoryControllerAdmin::class)->names([
+        'index' => 'admin.categories.index',
+        'create' => 'admin.categories.create',
+        'store' => 'admin.categories.store',
+        'edit' => 'admin.categories.edit',
+        'update' => 'admin.categories.update',
+        'destroy' => 'admin.categories.destroy',
+    ]);
 });
+
+
+
+
+
 
 
 
