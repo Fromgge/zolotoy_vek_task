@@ -4,22 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\CategoryService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     public function index()
     {
-        try {
-            $categories = Category::all();
-            return view('admin.categories.index', compact('categories'));
-        } catch (\Exception $e) {
-            Log::error('Error fetching categories: ' . $e->getMessage());
-            return redirect()->route('admin.categories.index')->with('error', 'Error fetching categories.');
-        }
+        $categories = $this->categoryService->getAllCategories();
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function create()
@@ -34,7 +35,7 @@ class CategoryController extends Controller
                 'name' => 'required|max:50',
             ]);
 
-            Category::create($request->all());
+            $this->categoryService->createCategory($request->all());
 
             return redirect()->route('admin.categories.index')->with('success', 'Category created successfully');
         } catch (ValidationException $e) {
@@ -44,33 +45,18 @@ class CategoryController extends Controller
             Log::error('Error creating category: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error creating category: ' . $e->getMessage());
         }
-
     }
 
     public function show($id)
     {
-        try {
-            $category = Category::findOrFail($id);
-            return view('admin.categories.show', compact('category'));
-        } catch (ModelNotFoundException $e) {
-            return redirect()->route('admin.categories.index')->with('error', 'Category not found');
-        } catch (\Exception $e) {
-            Log::error('Error fetching category details: ' . $e->getMessage());
-            return redirect()->route('admin.categories.index')->with('error', 'Error fetching category details.');
-        }
+        $category = $this->categoryService->getCategoryById($id);
+        return view('admin.categories.show', compact('category'));
     }
 
     public function edit($id)
     {
-        try {
-            $category = Category::findOrFail($id);
-            return view('admin.categories.edit', compact('category'));
-        } catch (ModelNotFoundException $e) {
-            return redirect()->route('admin.categories.index')->with('error', 'Category not found');
-        } catch (\Exception $e) {
-            Log::error('Error fetching category details: ' . $e->getMessage());
-            return redirect()->route('admin.categories.index')->with('error', 'Error fetching category details.');
-        }
+        $category = $this->categoryService->getCategoryById($id);
+        return view('admin.categories.edit', compact('category'));
     }
 
     public function update(Request $request, $id)
@@ -80,8 +66,8 @@ class CategoryController extends Controller
                 'name' => 'required|max:50',
             ]);
 
-            $category = Category::findOrFail($id);
-            $category->update($request->all());
+            $category = $this->categoryService->getCategoryById($id);
+            $this->categoryService->updateCategory($category, $request->all());
 
             return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully');
         } catch (ValidationException $e) {
@@ -95,12 +81,10 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         try {
-            $category = Category::findOrFail($id);
-            $category->delete();
+            $category = $this->categoryService->getCategoryById($id);
+            $this->categoryService->deleteCategory($category);
 
             return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully');
-        } catch (ModelNotFoundException $e) {
-            return redirect()->route('admin.categories.index')->with('error', 'Category not found');
         } catch (\Exception $e) {
             Log::error('Error deleting category: ' . $e->getMessage());
             return redirect()->route('admin.categories.index')->with('error', 'Error deleting category: ' . $e->getMessage());

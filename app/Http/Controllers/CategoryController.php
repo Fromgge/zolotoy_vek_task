@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Classes\AjaxHelper;
-use App\Models\Blog;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\BlogSearchService;
 
 class CategoryController extends Controller
 {
+    protected $blogSearchService;
+
+    public function __construct(BlogSearchService $blogSearchService)
+    {
+        $this->blogSearchService = $blogSearchService;
+    }
+
     public function index()
     {
         $categories = Category::all();
@@ -26,12 +33,7 @@ class CategoryController extends Controller
 
     public function search(Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $categoryId = $request->input('category');
-        $order = $request->input('order');
-
-        $blogs = Blog::search($categoryId, $startDate, $endDate, $order);
+        $blogs = $this->blogSearchService->search($request);
 
         AjaxHelper::addResponse('html', '#search_results', view('categories._parts._search', compact('blogs'))->render());
 
