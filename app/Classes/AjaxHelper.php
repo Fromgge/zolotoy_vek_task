@@ -18,7 +18,7 @@ class AjaxHelper
      */
     public static function addError(string $key, $error): void
     {
-//        self::$response['errors'] = [];
+        //        self::$response['errors'] = [];
         self::$response['errors'][$key] = $error;
 
     }

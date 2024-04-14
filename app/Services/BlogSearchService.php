@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 
-
 class BlogSearchService
 {
     public function search(Request $request)

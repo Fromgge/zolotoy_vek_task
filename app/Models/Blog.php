@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Blog extends Model
 {
-
     use HasFactory;
 
     protected $fillable = ['title', 'content'];
